@@ -93,6 +93,7 @@ object HiddenConflictBuild extends Build {
       "org.slf4j" % "slf4j-simple" % slf4jVersion,
       "org.apache.camel" % "camel-core" % camelVersion,
       "org.apache.camel" % "camel-websocket" % camelVersion,
+      "org.apache.camel" % "camel-jetty" % camelVersion,
       "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" artifacts (
         Artifact("javax.servlet", "jar", "jar")
         ),
@@ -118,6 +119,7 @@ object HiddenConflictBuild extends Build {
       "com.typesafe.slick" %% "slick" % slickVersion,
       "org.postgresql" % "postgresql" % pgsqlVersion,
 
+      "io.spray" %% "spray-json" % "1.3.0",
 
 
       "com.twitter" % "chill-java" % chillVersion,

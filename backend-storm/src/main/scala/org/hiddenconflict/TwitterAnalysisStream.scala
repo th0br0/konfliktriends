@@ -11,7 +11,7 @@ import backtype.storm.topology.TopologyBuilder
 import backtype.storm.utils.Utils
 import com.esotericsoftware.kryo.Kryo
 import com.twitter.chill.KryoSerializer
-import org.hiddenconflict.bolt.{ DumpStatusBolt, GeocodeStatusBolt, FilterTweetBolt }
+import org.hiddenconflict.bolt.{ StatusToJsonBolt, DumpStatusBolt, GeocodeStatusBolt, FilterTweetBolt }
 import org.hiddenconflict.spout.TwitterSpout
 import org.hiddenconflict.utils.TwitterStreamClient
 import storm.kafka.bolt.KafkaBolt
@@ -32,9 +32,9 @@ object TwitterAnalysisStream extends App with TwitterStreamClient {
   builder.setBolt("geocodeTweet", new GeocodeStatusBolt()).shuffleGrouping("filterTweet")
   //builder.setBolt("filter_one", new FilterTweetBolt).shuffleGrouping("twitter")
 
-  builder.setBolt("dumpStatus", new DumpStatusBolt).shuffleGrouping("geocodeTweet")
-  // Dump to file for now
-  //builder.setBolt("kafkaOut", new KafkaBolt[String, String]).shuffleGrouping("filterTweet")
+  // Dump to Kafka as JSON
+  builder.setBolt("tweetJson", new StatusToJsonBolt).shuffleGrouping("geocodeTweet")
+  builder.setBolt("kafkaOut", new KafkaBolt[String, String]).shuffleGrouping("tweetJson")
 
   val conf = new Config()
   conf.registerDecorator(classOf[KryoDecorator])

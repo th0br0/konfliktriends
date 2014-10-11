@@ -17,12 +17,13 @@ import scala.util.{ Failure, Success, Try }
  * @author Andreas C. Osowski
  */
 class GeocodeStatusBolt extends StormBolt(List("statusGeo")) with TwitterClient with Db with GoogleGeocoder {
-  private[this] var logger: Logger = null
+  var logger: Logger = null
 
   override def prepare(conf: util.Map[_, _], context: TopologyContext, collector: OutputCollector): Unit = {
     logger = Logger.getLogger(getClass)
     super.prepare(conf, context, collector)
 
+    initGeocoder()
   }
 
   def isGeocodableAddress(in: String) =
@@ -36,10 +37,12 @@ class GeocodeStatusBolt extends StormBolt(List("statusGeo")) with TwitterClient 
     if (!inDb.isEmpty) return inDb
 
     val result = geocodeAddress(address)
+    logger.info(s"Geocoding: $address Result: $result")
     result match {
       case Some(res) => Table.GeocodeResults.map(p => p).insert(GeocodeResult(address, res.lat, res.lng))
       case None =>
     }
+
     result
   }
 
