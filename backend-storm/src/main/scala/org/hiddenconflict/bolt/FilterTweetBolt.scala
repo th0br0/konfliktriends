@@ -6,14 +6,21 @@ import backtype.storm.task.{ OutputCollector, TopologyContext }
 import backtype.storm.topology.IRichBolt
 import backtype.storm.tuple.Tuple
 import redis.clients.jedis.{ Jedis, JedisPoolConfig, JedisPool }
+import storm.kafka.bolt.KafkaBolt
 import storm.scala.dsl.StormBolt
 import twitter4j.Status
+import twitter4j.json.DataObjectFactory
 
 /**
  * @author Andreas C. Osowski
  */
 
-class FilterTweetBolt extends StormBolt(Map("twitter" -> List("tweet"))) {
+case class FilterResult(timestamp: Long,
+  author: String,
+  mentions: Seq[String],
+  location: String)
+
+class FilterTweetBolt extends StormBolt(outputFields = List(KafkaBolt.BOLT_KEY, KafkaBolt.BOLT_MESSAGE)) {
 
   // XXX - have localhost user-configured
   var jedisPool: JedisPool = null
@@ -35,23 +42,38 @@ class FilterTweetBolt extends StormBolt(Map("twitter" -> List("tweet"))) {
 
   def hasLocation(implicit status: Status) = hasTweetLocation || hasAuthorLocation
 
-  def updateRedisLocation(jedis: Jedis, status: Status) = if (hasAuthorLocation(status)) {
-    jedis.setnx("" + status.getUser.getId, status.getUser.getLocation)
-  }
+  def retrieveLocation(jedis: Jedis)(implicit status: Status): Option[String] = if (hasLocation) {
+    if (hasTweetLocation) {
+      Some(status.getGeoLocation.getLatitude + ";" + status.getGeoLocation.getLongitude)
+    } else if (hasAuthorLocation) {
+      Some(status.getUser.getLocation)
+      /*jedis.get(status.getUser.getLocation) match {
+        case null => jedis.setnx
+
+        case v => Some(v)
+      }                       */
+    } else None
+  } else None
 
   override def execute(input: Tuple) = {
     implicit val status = input.getValue(0).asInstanceOf[Status]
 
-    val jedis = jedisPool.getResource
-
-    updateRedisLocation(jedis, status)
-
     if (containsMentions && hasLocation) {
-      if (hasTweetLocation) println(status.getGeoLocation)
-      else println(status.getUser.getLocation)
-      using anchor input emit status
-    }
+      val jedis = jedisPool.getResource
 
-    jedisPool.returnResource(jedis)
+      val location = retrieveLocation(jedis).getOrElse("None")
+      val mentions = status.getUserMentionEntities.map(e => e.getScreenName)
+      val author = status.getUser.getScreenName
+
+      val result = FilterResult(status.getCreatedAt.getTime, author, mentions, location)
+      val tolog = s"${result.timestamp},$author,${mentions.mkString(";")},$location\n"
+
+      println(tolog)
+
+      using anchor input emit ("websocket", DataObjectFactory.getRawJSON(status))
+
+      jedisPool.returnResource(jedis)
+    } else println("discard")
+
   }
 }

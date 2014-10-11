@@ -72,10 +72,11 @@ object HiddenConflictBuild extends Build {
   val tormentaVersion = "0.8.0"
   val kafkaVersion = "0.8.1.1"
   val camelVersion = "2.14.0"
+  val gmsVersion = "0.1.3"
 
+  val slf4jVersion = "1.6.6"
+  val log4jVersion = "1.2.17"
 
-  lazy val slf4jVersion = "1.6.6"
-  lazy val log4jVersion = "1.2.17"
 
   def module(name: String) = {
     val id = "backend-%s".format(name)
@@ -111,13 +112,15 @@ object HiddenConflictBuild extends Build {
       "org.apache.storm" % "storm" % stormVersion,
       "org.apache.storm" % "storm-kafka" % stormVersion,
 
+      "com.google.maps" % "google-maps-services" % gmsVersion,
+
+
       "com.twitter" % "chill-java" % chillVersion,
       "com.twitter" %% "chill" % chillVersion,
       "com.twitter" %% "algebird-bijection" % algebirdVersion,
       "com.twitter" %% "bijection-netty" % bijectionVersion,
       "com.twitter" %% "tormenta-twitter" % tormentaVersion,
       "org.apache.kafka" %% "kafka" % kafkaVersion
-
 
     )
   )
