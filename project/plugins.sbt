@@ -2,8 +2,10 @@ resolvers += Resolver.url("sbt-plugin-releases", new URL("http://scalasbt.artifa
 
 resolvers ++= Seq(
   "jgit-repo" at "http://download.eclipse.org/jgit/maven",
-  "sonatype-releases"  at "http://oss.sonatype.org/content/repositories/releases"
+  "sonatype-releases" at "http://oss.sonatype.org/content/repositories/releases"
 )
+
+addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.4")
 
 addSbtPlugin("com.twitter" %% "scrooge-sbt-plugin" % "3.14.1")
 

@@ -10,7 +10,7 @@ import sbtassembly.Plugin._
 import AssemblyKeys._
 
 object HiddenConflictBuild extends Build {
-  val extraSettings = Project.defaultSettings ++ scalariformSettings
+  val extraSettings = Project.defaultSettings ++ scalariformSettings ++ net.virtualvoid.sbt.graph.Plugin.graphSettings
 
   val sharedSettings = extraSettings ++ Seq(
     organization := "com.hiddenconflict",
@@ -20,7 +20,7 @@ object HiddenConflictBuild extends Build {
 
     libraryDependencies ++= Seq(
       "org.slf4j" % "slf4j-api" % slf4jVersion,
-      "org.apache.storm" % "storm-core" % stormVersion,
+      "org.apache.storm" % "storm-core" % stormVersion exclude("org.slf4j", "log4j-over-slf4j"),
       "org.apache.storm" % "storm" % stormVersion,
       "com.github.velvia" %% "scala-storm" % "0.2.4-SNAPSHOT"
     ),
@@ -65,14 +65,15 @@ object HiddenConflictBuild extends Build {
     )
 
   val stormVersion = "0.9.2-incubating"
-  val twitter4jVersion = "3.0.3"
+  val twitter4jVersion = "3.0.5"
   val jedisVersion = "2.6.0"
 
   val chillVersion = "0.5.0"
   val algebirdVersion = "0.8.1"
   val bijectionVersion = "0.7.0"
   val tormentaVersion = "0.8.0"
-
+  val kafkaVersion = "0.8.1.1"
+  val camelVersion = "2.14.0"
 
 
   lazy val slf4jVersion = "1.6.6"
@@ -86,6 +87,15 @@ object HiddenConflictBuild extends Build {
     )
   }
 
+  lazy val backendCamel = module("camel").settings(
+    libraryDependencies ++= Seq(
+      "org.apache.camel" % "camel-core" % camelVersion,
+      "org.apache.camel" % "camel-websocket" % camelVersion,
+      "org.apache.camel" % "camel-kafka" % camelVersion,
+      "org.apache.camel" % "camel-stream" % camelVersion
+    )
+  )
+
   lazy val backendStorm = module("storm").settings(
     scalacOptions ++= Seq(
       "-optimise"
@@ -94,12 +104,15 @@ object HiddenConflictBuild extends Build {
       "org.twitter4j" % "twitter4j-stream" % twitter4jVersion,
       "org.twitter4j" % "twitter4j-core" % twitter4jVersion,
       "redis.clients" % "jedis" % jedisVersion,
+      "org.apache.storm" % "storm-kafka" % stormVersion,
 
       "com.twitter" % "chill-java" % chillVersion,
       "com.twitter" %% "chill" % chillVersion,
       "com.twitter" %% "algebird-bijection" % algebirdVersion,
       "com.twitter" %% "bijection-netty" % bijectionVersion,
-      "com.twitter" %% "tormenta-twitter" % tormentaVersion
+      "com.twitter" %% "tormenta-twitter" % tormentaVersion,
+      "org.apache.kafka" %% "kafka" % kafkaVersion
+
 
     )
   )
