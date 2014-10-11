@@ -141,11 +141,14 @@ R.Pulse = R.Layer.extend({
 
 		this._latlng = latlng;
 		this._radius = (typeof radius == 'number' ? radius : 6);
-		this._attr = (typeof radius == 'object' ? radius : (typeof attr == 'object' ? attr : {'fill': '#30a3ec', 'stroke': '#30a3ec'}));
-		this._pulseAttr = (typeof radius == 'object' ? attr : typeof pulseAttr == 'object' ? pulseAttr : {
+		this._attr = (typeof attr == 'object' ? attr : {'fill': '#30a3ec', 'stroke': '#30a3ec'});
+		this._pulseAttr = (typeof pulseAttr == 'object' ? pulseAttr : {
 			'stroke-width': 3,
 			'stroke': this._attr.stroke
 		});
+
+		console.log(this._attr);
+		console.log(this._pulseAttr);
 		this._repeat = 3;
 	},
 
@@ -337,7 +340,7 @@ R.BezierAnim = R.Layer.extend({
 		R.Layer.prototype.initialize.call(this, options);
 
 		this._latlngs = latlngs;
-		this._attr = attr;
+		this._attr = (typeof attr == "object") ? attr : { 'stroke' : '#f00' };
 		this._cb = cb;
 	},
 
@@ -373,7 +376,7 @@ R.BezierAnim = R.Layer.extend({
 			.data('pathLength', line.getTotalLength())
 			.data('reverse', false)
 			.attr({
-				'stroke': '#f00',
+				'stroke': this._attr['stroke'],
 				'alongBezier': 0,
 				'stroke-width': 3
 			});

@@ -26,13 +26,10 @@ map.featureLayer.on('ready', function () {
             var dest = L.latLng(to.lat, to.lng);
 
 
-            var b = new R.BezierAnim([source, dest], {}, function () {
+            var b = new R.BezierAnim([source, dest], {'stroke': color}, function () {
                 var p = new R.Pulse(
-                    dest, 6,
+                    dest, 40 * Math.abs(data.weight),
                     {
-                        'stroke': color,
-                        'fill': color
-                    }, {
                         'stroke': color,
                         'fill': color
                     }, {
@@ -42,8 +39,8 @@ map.featureLayer.on('ready', function () {
 
                 map.addLayer(p);
                 setTimeout(function () {
-                    map.removeLayer(b).removeLayer(p);
-                }, 1500);
+                    map.removeLayer(b);
+                }, 1000);
             });
             map.addLayer(b);
         }
