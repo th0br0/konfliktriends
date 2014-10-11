@@ -20,8 +20,6 @@ object HiddenConflictBuild extends Build {
 
     libraryDependencies ++= Seq(
       "org.slf4j" % "slf4j-api" % slf4jVersion,
-      "org.apache.storm" % "storm-core" % stormVersion exclude("org.slf4j", "log4j-over-slf4j"),
-      "org.apache.storm" % "storm" % stormVersion,
       "com.github.velvia" %% "scala-storm" % "0.2.4-SNAPSHOT"
     ),
 
@@ -89,8 +87,12 @@ object HiddenConflictBuild extends Build {
 
   lazy val backendCamel = module("camel").settings(
     libraryDependencies ++= Seq(
+      "org.slf4j" % "slf4j-simple" % slf4jVersion,
       "org.apache.camel" % "camel-core" % camelVersion,
       "org.apache.camel" % "camel-websocket" % camelVersion,
+      "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" artifacts (
+        Artifact("javax.servlet", "jar", "jar")
+        ),
       "org.apache.camel" % "camel-kafka" % camelVersion,
       "org.apache.camel" % "camel-stream" % camelVersion
     )
@@ -104,6 +106,9 @@ object HiddenConflictBuild extends Build {
       "org.twitter4j" % "twitter4j-stream" % twitter4jVersion,
       "org.twitter4j" % "twitter4j-core" % twitter4jVersion,
       "redis.clients" % "jedis" % jedisVersion,
+
+      "org.apache.storm" % "storm-core" % stormVersion,
+      "org.apache.storm" % "storm" % stormVersion,
       "org.apache.storm" % "storm-kafka" % stormVersion,
 
       "com.twitter" % "chill-java" % chillVersion,
