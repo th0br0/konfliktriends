@@ -30,7 +30,8 @@ object HiddenConflictBuild extends Build {
       Opts.resolver.sonatypeReleases,
       "Clojars Repository" at "http://clojars.org/repo",
       "Conjars Repository" at "http://conjars.org/repo",
-      "Twitter Maven" at "http://maven.twttr.com"
+      "Twitter Maven" at "http://maven.twttr.com",
+      "twitter4j maven" at "http://twitter4j.org/maven2"
     ),
 
     parallelExecution in Test := true,
@@ -63,17 +64,15 @@ object HiddenConflictBuild extends Build {
       backendStorm
     )
 
-  val bijectionVersion = "0.6.3"
-  val scaldingVersion = "0.11.2"
-  val chillVersion = "0.4.0"
-  val hadoopVersion = "2.4.0"
-  val cascadingVersion = "2.5.6"
-  val cascadingJdbcVersion = "2.5.4"
-  // 2.5.4 jdbc uses cascading 2.5.5 -.-
-  val mongoHadoopVersion = "1.3.0"
-  val postgresVersion = "9.3-1102-jdbc41"
   val stormVersion = "0.9.2-incubating"
   val twitter4jVersion = "4.0.2"
+  val jedisVersion = "2.6.0"
+
+  val chillVersion = "0.5.0"
+  val algebirdVersion = "0.8.1"
+  val bijectionVersion = "0.7.0"
+  val tormentaVersion = "0.8.0"
+
 
 
   lazy val slf4jVersion = "1.6.6"
@@ -87,10 +86,21 @@ object HiddenConflictBuild extends Build {
     )
   }
 
-  lazy val backendStorm= module("storm").settings(
+  lazy val backendStorm = module("storm").settings(
     scalacOptions ++= Seq(
-            "-optimise"
+      "-optimise"
     ),
-    libraryDependencies += "org.twitter4j" % "twitter4j-stream" % twitter4jVersion
+    libraryDependencies ++= Seq(
+      "org.twitter4j" % "twitter4j-stream" % twitter4jVersion,
+      "org.twitter4j" % "twitter4j-core" % twitter4jVersion,
+      "redis.clients" % "jedis" % jedisVersion,
+
+      "com.twitter" % "chill-java" % chillVersion,
+      "com.twitter" %% "chill" % chillVersion,
+      "com.twitter" %% "algebird-bijection" % algebirdVersion,
+      "com.twitter" %% "bijection-netty" % bijectionVersion,
+      "com.twitter" %% "tormenta" % tormentaVersion
+
+    )
   )
 }
