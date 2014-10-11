@@ -2,56 +2,62 @@ package org.hiddenconflict.bolt
 
 import java.util
 
-import backtype.storm.task.{OutputCollector, TopologyContext}
+import backtype.storm.task.{ OutputCollector, TopologyContext }
 import backtype.storm.tuple.Tuple
-import com.google.maps.{GeocodingApi, GeoApiContext}
-import org.hiddenconflict.utils.TwitterClient
+import com.google.maps.{ GeocodingApi, GeoApiContext }
+import org.apache.log4j.Logger
+import org.hiddenconflict.db.{ GeocodeResult, Table, Db }
+import org.hiddenconflict.utils.{ GoogleGeocoder, TwitterClient }
 import storm.scala.dsl.StormBolt
 import scala.collection.JavaConverters._
-import scala.util.{Failure, Success, Try}
+import scala.slick.driver.PostgresDriver.simple._
+import scala.util.{ Failure, Success, Try }
 
 /**
  * @author Andreas C. Osowski
  */
-class GeocodeStatusBolt extends StormBolt(List("statusGeo")) with TwitterClient {
-  var geoContext: GeoApiContext = null
+class GeocodeStatusBolt extends StormBolt(List("statusGeo")) with TwitterClient with Db with GoogleGeocoder {
+  private[this] var logger: Logger = null
 
   override def prepare(conf: util.Map[_, _], context: TopologyContext, collector: OutputCollector): Unit = {
+    logger = Logger.getLogger(getClass)
     super.prepare(conf, context, collector)
 
-    geoContext = new GeoApiContext().setApiKey("AIzaSyAKwmiHBkXg0CD4idMqbLhDBn5rh90SJFw")
-      .setQueryRateLimit(5)
   }
 
   def isGeocodableAddress(in: String) =
     !in.contains("@")
 
-  def geocodeAddress(address: String): Option[GeoCoordinate] = {
+  def geocodeWithDb(address: String): Option[GeoCoordinate] = withDb { implicit session =>
     // Query db, return result if present.
+    // XXX - chain these as separate functions...
+    val inDb = Table.GeocodeResults.filter(r => r.address === address).firstOption
+      .map(result => GeoCoordinate(result.lat, result.lon))
+    if (!inDb.isEmpty) return inDb
 
-    val req = GeocodingApi.newRequest(geoContext).address(address)
-    val result = Try(req.await()) match {
-      case Success(array) => Some(array(0).geometry.location).map(l => GeoCoordinate(l.lat, l.lng))
-      case Failure(ex) => None
+    val result = geocodeAddress(address)
+    result match {
+      case Some(res) => Table.GeocodeResults.map(p => p).insert(GeocodeResult(address, res.lat, res.lng))
+      case None =>
     }
-
-    if(!result.isEmpty) {
-      // persist to db
-    }
-
     result
   }
 
   override def execute(input: Tuple): Unit = {
     val status = input.getValueByField("status").asInstanceOf[StatusContent]
+    logger.info("Incoming status: " + status)
+
     if (status.location.isEmpty) return
 
     val userLocation = status.location.get match {
       case Left(l) => Some(l)
-      case Right(address) if isGeocodableAddress(address) => geocodeAddress(address)
+      case Right(address) if isGeocodableAddress(address) => geocodeWithDb(address)
       case Right(_) => None
 
     }
+
+    logger.info("Traced userLoc: " + userLocation)
+
     if (userLocation.isEmpty) return
 
     val (mentionIds, mentionGeo) = {
@@ -62,22 +68,22 @@ class GeocodeStatusBolt extends StormBolt(List("statusGeo")) with TwitterClient 
     }
 
     val mentionUsers = twitter.lookupUsers(mentionIds.toArray).asScala.filterNot(_ == null)
-      .map(u => (u, u.getLocation()))
-      .filter(t => isGeocodableAddress(t._2))
+      .filter(t => isGeocodableAddress(t.getLocation))
+      .toSeq
 
+    logger.info("mentionUsers: " + mentionUsers.map(u => (u.getScreenName, u.getLocation)))
     if (mentionUsers.isEmpty) return
 
     // Loosing user here because we're not really interested in them for now, not storing it anyway.
     // Also, geocodeAddress(String) is storing the result in the db.
-    val locations = mentionUsers.map(t => geocodeAddress(t._2)).filterNot(_.isEmpty).map(_.get) ++ mentionGeo
+    val locations = mentionUsers.map(t => geocodeWithDb(t.getLocation)).filterNot(_.isEmpty).map(_.get) ++ mentionGeo
 
-    using anchor input emit status.copy(
-      location = Some(Left(userLocation.get)),
-      mentions = locations.map(c => Right(c))
-    )
-
-
-
+    if (!locations.isEmpty)
+      using anchor input emit status.copy(
+        location = Some(Left(userLocation.get)),
+        mentions = locations.map(c => Right(c))
+      )
+    else logger.info("Dropping for no mention loc found: " + status)
 
   }
 }

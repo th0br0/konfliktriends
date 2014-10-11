@@ -11,7 +11,7 @@ import backtype.storm.topology.TopologyBuilder
 import backtype.storm.utils.Utils
 import com.esotericsoftware.kryo.Kryo
 import com.twitter.chill.KryoSerializer
-import org.hiddenconflict.bolt.FilterTweetBolt
+import org.hiddenconflict.bolt.{ DumpStatusBolt, GeocodeStatusBolt, FilterTweetBolt }
 import org.hiddenconflict.spout.TwitterSpout
 import org.hiddenconflict.utils.TwitterStreamClient
 import storm.kafka.bolt.KafkaBolt
@@ -22,16 +22,19 @@ class KryoDecorator extends IKryoDecorator {
 
 object TwitterAnalysisStream extends App with TwitterStreamClient {
   // XXX - parallelism settings
+  Class.forName("org.postgresql.Driver");
 
   val builder = new TopologyBuilder
   builder.setSpout("twitterSample", TwitterSpout(twitterStreamFactory, 1000, "tweet"))
 
   // Step 1: Filter incoming tweets.
-  builder.setBolt("filterTweet", new FilterTweetBolt(), 4).shuffleGrouping("twitterSample")
+  builder.setBolt("filterTweet", new FilterTweetBolt()).shuffleGrouping("twitterSample")
+  builder.setBolt("geocodeTweet", new GeocodeStatusBolt()).shuffleGrouping("filterTweet")
   //builder.setBolt("filter_one", new FilterTweetBolt).shuffleGrouping("twitter")
 
+  builder.setBolt("dumpStatus", new DumpStatusBolt).shuffleGrouping("geocodeTweet")
   // Dump to file for now
-  builder.setBolt("kafkaOut", new KafkaBolt[String, String]).shuffleGrouping("filterTweet")
+  //builder.setBolt("kafkaOut", new KafkaBolt[String, String]).shuffleGrouping("filterTweet")
 
   val conf = new Config()
   conf.registerDecorator(classOf[KryoDecorator])

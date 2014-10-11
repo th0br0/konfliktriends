@@ -76,6 +76,8 @@ object HiddenConflictBuild extends Build {
 
   val slf4jVersion = "1.6.6"
   val log4jVersion = "1.2.17"
+  val slickVersion = "2.1.0"
+  val pgsqlVersion = "9.3-1102-jdbc4"
 
 
   def module(name: String) = {
@@ -113,6 +115,9 @@ object HiddenConflictBuild extends Build {
       "org.apache.storm" % "storm-kafka" % stormVersion,
 
       "com.google.maps" % "google-maps-services" % gmsVersion,
+      "com.typesafe.slick" %% "slick" % slickVersion,
+      "org.postgresql" % "postgresql" % pgsqlVersion,
+
 
 
       "com.twitter" % "chill-java" % chillVersion,
