@@ -65,7 +65,7 @@ object HiddenConflictBuild extends Build {
     )
 
   val stormVersion = "0.9.2-incubating"
-  val twitter4jVersion = "4.0.2"
+  val twitter4jVersion = "3.0.3"
   val jedisVersion = "2.6.0"
 
   val chillVersion = "0.5.0"
@@ -99,7 +99,7 @@ object HiddenConflictBuild extends Build {
       "com.twitter" %% "chill" % chillVersion,
       "com.twitter" %% "algebird-bijection" % algebirdVersion,
       "com.twitter" %% "bijection-netty" % bijectionVersion,
-      "com.twitter" %% "tormenta" % tormentaVersion
+      "com.twitter" %% "tormenta-twitter" % tormentaVersion
 
     )
   )

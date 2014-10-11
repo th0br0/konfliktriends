@@ -14,12 +14,18 @@ sealed trait TwitterConfig {
   val accessToken = "17422249-FTPgN7WOoyY6gwJfHlh2ieH4z3SwpJCImLGIUYcqw"
   val accessTokenSecret = "A5ZjRgxwMc7cLACkCCRtwOaBjGbDdkBEs3vEoozK0IOb1"
 
-  val twitterConfig = new ConfigurationBuilder().setJSONStoreEnabled(true).build()
+  val twitterConfig = new ConfigurationBuilder().setJSONStoreEnabled(true)
+    .setOAuthConsumerKey(consumerKey)
+    .setOAuthConsumerSecret(consumerSecret)
+    .setOAuthAccessToken(accessToken)
+    .setOAuthAccessTokenSecret(accessTokenSecret)
+    .build()
 }
 
 trait TwitterStreamClient extends TwitterConfig {
+  lazy val twitterStreamFactory = new TwitterStreamFactory(twitterConfig)
   lazy val twitterStream = {
-    val stream = new TwitterStreamFactory(twitterConfig).getInstance()
+    val stream = twitterStreamFactory.getInstance()
     stream.setOAuthAccessToken(new AccessToken(accessToken, accessTokenSecret))
     stream.setOAuthConsumer(consumerKey, consumerSecret)
     stream
@@ -27,8 +33,9 @@ trait TwitterStreamClient extends TwitterConfig {
 }
 
 trait TwitterClient extends TwitterConfig {
+  lazy val twitterFactory = new TwitterFactory(twitterConfig)
   lazy val twitter = {
-    val cli = new TwitterFactory(twitterConfig).getInstance()
+    val cli = twitterFactory.getInstance()
     cli.setOAuthAccessToken(new AccessToken(accessToken, accessTokenSecret))
     cli.setOAuthConsumer(consumerKey, consumerSecret)
     cli

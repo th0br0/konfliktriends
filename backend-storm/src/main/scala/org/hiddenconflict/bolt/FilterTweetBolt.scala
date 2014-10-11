@@ -3,6 +3,7 @@ package org.hiddenconflict.bolt
 import java.util
 
 import backtype.storm.task.{ OutputCollector, TopologyContext }
+import backtype.storm.topology.IRichBolt
 import backtype.storm.tuple.Tuple
 import redis.clients.jedis.{ Jedis, JedisPoolConfig, JedisPool }
 import storm.scala.dsl.StormBolt
@@ -15,15 +16,16 @@ import twitter4j.Status
 class FilterTweetBolt extends StormBolt(Map("twitter" -> List("tweet"))) {
 
   // XXX - have localhost user-configured
-  lazy val jedisPool: JedisPool = new JedisPool(new JedisPoolConfig, "localhost")
+  var jedisPool: JedisPool = null
 
-  shutdown({
+  override def prepare(conf: util.Map[_, _], context: TopologyContext, collector: OutputCollector): Unit = {
+    super.prepare(conf, context, collector)
+    jedisPool = new JedisPool(new JedisPoolConfig, "localhost")
+  }
+
+  override def cleanup(): Unit = {
     jedisPool.close()
-  })
-
-  setup({
-    jedisPool.getNumActive
-  })
+  }
 
   def containsMentions(implicit status: Status) = status.getUserMentionEntities.length > 0
 
@@ -39,6 +41,7 @@ class FilterTweetBolt extends StormBolt(Map("twitter" -> List("tweet"))) {
 
   override def execute(input: Tuple) = {
     implicit val status = input.getValue(0).asInstanceOf[Status]
+
     val jedis = jedisPool.getResource
 
     updateRedisLocation(jedis, status)
