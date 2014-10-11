@@ -34,7 +34,7 @@ class StatusToJsonBolt extends StormBolt(List(KafkaBolt.BOLT_KEY, KafkaBolt.BOLT
   }
 
   override def execute(input: Tuple): Unit = {
-    val status = input.getValueByField("statusGeo").asInstanceOf[StatusContent]
+    val status = input.getValueByField("status").asInstanceOf[StatusContent]
 
     logger.info("Emitting JSON")
 
@@ -45,6 +45,6 @@ class StatusToJsonBolt extends StormBolt(List(KafkaBolt.BOLT_KEY, KafkaBolt.BOLT
       Math.random() * 2.0 - 1.0
     )
 
-    using anchor input emit statusJson.toJson.toString
+    using anchor input emit ("websocket", statusJson.toJson.toString)
   }
 }

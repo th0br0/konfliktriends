@@ -78,6 +78,7 @@ object HiddenConflictBuild extends Build {
   val log4jVersion = "1.2.17"
   val slickVersion = "2.1.0"
   val pgsqlVersion = "9.3-1102-jdbc4"
+  val nlpVersion = "3.4.1"
 
 
   def module(name: String) = {
@@ -120,6 +121,8 @@ object HiddenConflictBuild extends Build {
       "org.postgresql" % "postgresql" % pgsqlVersion,
 
       "io.spray" %% "spray-json" % "1.3.0",
+      "edu.stanford.nlp" % "stanford-corenlp" % nlpVersion,
+      "edu.stanford.nlp" % "stanford-parser" % nlpVersion,
 
 
       "com.twitter" % "chill-java" % chillVersion,

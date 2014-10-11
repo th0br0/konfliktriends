@@ -6,6 +6,8 @@ import org.hiddenconflict.bolt.GeoCoordinate
 
 import scala.util.{ Failure, Success, Try }
 
+import scala.collection.JavaConverters._
+
 /**
  * @author Andreas C. Osowski
  */
@@ -25,7 +27,7 @@ trait GoogleGeocoder extends Geocoder {
     Try(GeocodingApi.newRequest(context).address(address).await) match {
       case Success(arr) if arr.length > 0 => Some(arr(0).geometry.location).map(l => GeoCoordinate(l.lat, l.lng))
       case Success(a) =>
-        logger.warn(s"Geocode Success but ? ${a.toString}"); None
+        logger.warn(s"Geocode Success but ? ${a.toList}"); None
       case Failure(ex) => logger.error(ex); None
     }
 

@@ -25,7 +25,8 @@ case class StatusContent(
   author: String,
   location: Option[Either[GeoCoordinate, String]],
   mentions: Seq[Either[Long, GeoCoordinate]],
-  text: String)
+  text: String,
+  weight: Double = 0.0)
 
 case class GeoCoordinate(lat: Double, lng: Double)
 

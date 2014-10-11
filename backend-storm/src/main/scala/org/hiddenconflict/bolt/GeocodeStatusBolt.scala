@@ -16,7 +16,7 @@ import scala.util.{ Failure, Success, Try }
 /**
  * @author Andreas C. Osowski
  */
-class GeocodeStatusBolt extends StormBolt(List("statusGeo")) with TwitterClient with Db with GoogleGeocoder {
+class GeocodeStatusBolt extends StormBolt(List("status")) with TwitterClient with Db with GoogleGeocoder {
   var logger: Logger = null
 
   override def prepare(conf: util.Map[_, _], context: TopologyContext, collector: OutputCollector): Unit = {

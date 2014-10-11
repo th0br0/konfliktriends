@@ -20,7 +20,7 @@ class DumpStatusBolt extends StormBolt(outputFields = List()) {
   }
 
   def execute(input: Tuple) = {
-    val status = input.getValue(0).asInstanceOf[StatusContent]
+    val status = input.getValueByField("status").asInstanceOf[StatusContent]
     logger.info("Dumping: " + status)
   }
 
