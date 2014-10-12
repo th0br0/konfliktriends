@@ -146,9 +146,6 @@ R.Pulse = R.Layer.extend({
 			'stroke-width': 3,
 			'stroke': this._attr.stroke
 		});
-
-		console.log(this._attr);
-		console.log(this._pulseAttr);
 		this._repeat = 3;
 	},
 

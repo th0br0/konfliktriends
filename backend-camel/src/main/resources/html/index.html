@@ -5,6 +5,8 @@
     <script src='mapbox.js'></script>
     <link href='mapbox.css' rel='stylesheet'/>
     <script src="raphael.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/queue.v1.min.js"></script>
     <script src="rlayer.js"></script>
     <style>
         body {
@@ -18,11 +20,53 @@
             bottom: 0;
             width: 100%;
         }
+
+        .time h1 {
+            position: absolute;
+            right: 0px;
+            text-align: right;
+            padding-right: 1em;
+            float: right;
+            z-index: 10000;
+            color: gainsboro;
+            font-size: 1.5em;
+        }
+
+
     </style>
-    <title>Hello World!</title>
+    <title>Konfliktriends - hackZurich 2014 - Live Demo</title>
 </head>
 <body>
+
+<nav class="time">
+    <h1 id="timestamp"></h1>
+</nav>
+
+
+</div>
+<div id='legend' style='display:none;'>
+    <h1>Konfliktriends - Settings</h1>
+
+    <nav class='legend clearfix'>
+        <label for="showLayers">Show Sentiment Overlay</label>
+        <input type="checkbox" id="showLayers" onchange="showLayers(this.checked);" /><br>
+    </nav>
+</div>
 <div id='map'></div>
+
+<svg>
+    <defs>
+        <linearGradient id="isrGradient" x1="0%" y1="0%" x2="100%" y2="0%" gradientTransform="rotate(90)" >
+            <stop id="isrBad" offset="100%" style="stop-color:rgb(255,0,0)"/>
+            <stop id="isrGood" offset="0%" style="stop-color:rgb(0,255,0)"/>
+        </linearGradient>
+        <linearGradient id="pseGradient" x1="0%" y1="0%" x2="100%" y2="0%" >
+            <stop id="pseBad" offset="100%" style="stop-color:rgb(255,0,0)"/>
+            <stop id="pseGood" offset="0%" style="stop-color:rgb(0,255,0)"/>
+        </linearGradient>
+    </defs>
+</svg>
+<script type='text/javascript' src="countries.js"></script>
 <script type='text/javascript' src="app.js"></script>
 </body>
 </html>
