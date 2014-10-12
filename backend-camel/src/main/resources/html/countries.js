@@ -3,15 +3,15 @@
 var pse = {
     prefix: "pse",
     layer: null,
-    good: 0,
-    bad: 0
+    good: 0.5,
+    bad: 0.5
 };
 
 var isr = {
     prefix: "isr",
     layer: null,
-    good: 0,
-    bad: 0
+    good: 0.5,
+    bad: 0.5
 };
 
 function showLayers(yes) {

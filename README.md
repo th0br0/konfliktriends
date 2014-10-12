@@ -20,5 +20,5 @@ The live demo will only be available until about 10/14/14.
 * Run backend-camel: ```sbt backend-camel/run```
 
 ##License
-Copyright (c) 2014 Andreas C. Osowski
+Copyright (c) 2014 Nkechi Achara, Patrick Wied, Andreas C. Osowski
 The software contained in this repository is licensed under the terms of the GPL2. Please see [LICENSE](LICENSE) for its terms. 

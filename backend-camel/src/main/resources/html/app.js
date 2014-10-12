@@ -17,6 +17,7 @@ function updateTimestamp() {
 map.featureLayer.on('ready', function () {
     updateTimestamp();
     setupCountries();
+    updateLayers();
 
 
     map.legendControl.addLegend(document.getElementById('legend').innerHTML);
@@ -61,7 +62,7 @@ map.featureLayer.on('ready', function () {
         }
         map.addLayer(b);
     }
-})o;
+});
 
 
 //    L.geoJson(data).addTo(map);
