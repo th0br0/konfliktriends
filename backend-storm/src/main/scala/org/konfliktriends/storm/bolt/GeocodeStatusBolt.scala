@@ -1,4 +1,4 @@
-package org.hiddenconflict.bolt
+package org.konfliktriends.bolt
 
 import java.util
 
@@ -6,8 +6,8 @@ import backtype.storm.task.{ OutputCollector, TopologyContext }
 import backtype.storm.tuple.Tuple
 import com.google.maps.{ GeocodingApi, GeoApiContext }
 import org.apache.log4j.Logger
-import org.hiddenconflict.db.{ GeocodeResult, Table, Db }
-import org.hiddenconflict.utils.{ GoogleGeocoder, TwitterClient }
+import org.konfliktriends.db.{ GeocodeResult, Table, Db }
+import org.konfliktriends.utils.{ GoogleGeocoder, TwitterClient }
 import storm.scala.dsl.StormBolt
 import scala.collection.JavaConverters._
 import scala.slick.driver.PostgresDriver.simple._

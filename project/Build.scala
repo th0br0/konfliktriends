@@ -9,11 +9,11 @@ import com.twitter.scrooge.ScroogeSBT
 import sbtassembly.Plugin._
 import AssemblyKeys._
 
-object HiddenConflictBuild extends Build {
+object KonfliktriendsBuild extends Build {
   val extraSettings = Project.defaultSettings ++ scalariformSettings ++ net.virtualvoid.sbt.graph.Plugin.graphSettings
 
   val sharedSettings = extraSettings ++ Seq(
-    organization := "com.hiddenconflict",
+    organization := "org.konfliktriends",
     version := "0.0.1",
     scalaVersion := "2.10.4",
     javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),

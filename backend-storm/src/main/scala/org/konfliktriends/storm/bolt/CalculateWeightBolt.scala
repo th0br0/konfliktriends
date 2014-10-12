@@ -1,4 +1,4 @@
-package org.hiddenconflict.bolt
+package org.konfliktriends.bolt
 
 import java.util
 import java.util.Properties

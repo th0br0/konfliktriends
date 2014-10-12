@@ -1,4 +1,4 @@
-package org.hiddenconflict.db
+package org.konfliktriends.db
 
 import scala.slick.driver.PostgresDriver.simple._
 import scala.slick.lifted.{ TableQuery, Tag }

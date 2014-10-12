@@ -1,4 +1,4 @@
-package com.hiddenconflict.camel
+package com.konfliktriends.camel
 
 import org.apache.camel.main.Main
 import org.apache.camel.builder.RouteBuilder

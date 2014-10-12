@@ -1,4 +1,4 @@
-package org.hiddenconflict.utils
+package org.konfliktriends.utils
 
 import twitter4j.auth.AccessToken
 import twitter4j.{ TwitterFactory, TwitterStreamFactory }

@@ -1,11 +1,11 @@
-package org.hiddenconflict.bolt
+package org.konfliktriends.bolt
 
 import java.util
 
 import backtype.storm.task.{ OutputCollector, TopologyContext }
 import backtype.storm.topology.IRichBolt
 import backtype.storm.tuple.Tuple
-import org.hiddenconflict.utils.StatusHelpers
+import org.konfliktriends.utils.StatusHelpers
 import storm.kafka.bolt.KafkaBolt
 import storm.scala.dsl.StormBolt
 import twitter4j.Status

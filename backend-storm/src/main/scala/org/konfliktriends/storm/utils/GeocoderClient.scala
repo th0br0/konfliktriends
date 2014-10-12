@@ -1,8 +1,8 @@
-package org.hiddenconflict.utils
+package org.konfliktriends.utils
 
 import com.google.maps.{ GeocodingApi, GeoApiContext }
 import org.apache.log4j.Logger
-import org.hiddenconflict.bolt.GeoCoordinate
+import org.konfliktriends.bolt.GeoCoordinate
 
 import scala.util.{ Failure, Success, Try }
 

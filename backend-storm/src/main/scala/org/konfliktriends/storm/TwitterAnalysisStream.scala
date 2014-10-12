@@ -1,4 +1,4 @@
-package org.hiddenconflict
+package org.konfliktriends
 
 import java.security.cert.X509Certificate
 import java.util.{ Properties, Arrays }
@@ -11,9 +11,9 @@ import backtype.storm.topology.TopologyBuilder
 import backtype.storm.utils.Utils
 import com.esotericsoftware.kryo.Kryo
 import com.twitter.chill.KryoSerializer
-import org.hiddenconflict.bolt._
-import org.hiddenconflict.spout.TwitterSpout
-import org.hiddenconflict.utils.TwitterStreamClient
+import org.konfliktriends.bolt._
+import org.konfliktriends.spout.TwitterSpout
+import org.konfliktriends.utils.TwitterStreamClient
 import storm.kafka.bolt.KafkaBolt
 
 class KryoDecorator extends IKryoDecorator {
