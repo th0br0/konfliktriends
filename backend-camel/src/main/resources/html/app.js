@@ -9,7 +9,7 @@ var map = L.mapbox.map('map', 'fcc.map-toolde8w', {
 map.featureLayer.on('ready', function () {
 
     // Setup websocket!
-    var ws = new WebSocket("ws://localhost:9292/websocket");
+    var ws = new WebSocket("ws://"+window.location.host+":9292/websocket");
     ws.onopen = function (evt) {
         console.log(evt);
     };
@@ -39,7 +39,7 @@ map.featureLayer.on('ready', function () {
 
                 map.addLayer(p);
                 setTimeout(function () {
-                    map.removeLayer(b);
+                    map.removeLayer(b).removeLayer(p);
                 }, 1000);
             });
             map.addLayer(b);

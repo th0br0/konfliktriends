@@ -68,9 +68,15 @@ class TwitterSpout[+T](factory: TwitterStreamFactory, limit: Int, fieldName: Str
     val filterQuery = new FilterQuery()
     // all israel + gaza
     //    filterQuery.locations(Array(Array(34.005768, 29.420600), Array(35.939361, 33.481987)))
+
+    // israel + gaza + surroundings (:/): 31.31098, 34.114423 | 32.3724775, ta35.5102823
+    // ukraine: 31.135254, 44.457310 |
+    //
     filterQuery.locations(Array(
       Array(34.114423, 31.310980),
-      Array(35.5102823, 32.3724775)
+      Array(35.5102823, 32.3724775),
+      Array(31.135254, 44.457310),
+      Array(40.579166, 50.655875)
     ))
     stream.filter(filterQuery)
   }

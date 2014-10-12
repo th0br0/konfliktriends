@@ -18,15 +18,17 @@ case class StatusJson(
   from: GeoCoordinate,
   to: Seq[GeoCoordinate],
   timestamp: Long,
+  message: String,
   weight: Double = 0)
 
 object StatusJsonProtocol extends DefaultJsonProtocol {
   implicit val geoCoordinateFormat = jsonFormat2(GeoCoordinate)
-  implicit val statusJsonFormat = jsonFormat5(StatusJson)
+  implicit val statusJsonFormat = jsonFormat6(StatusJson)
 }
 
 class StatusToJsonBolt extends StormBolt(List(KafkaBolt.BOLT_KEY, KafkaBolt.BOLT_MESSAGE)) {
   var logger: Logger = null
+
   import StatusJsonProtocol._
 
   override def prepare(conf: util.Map[_, _], context: TopologyContext, collector: OutputCollector): Unit = {
@@ -44,6 +46,7 @@ class StatusToJsonBolt extends StormBolt(List(KafkaBolt.BOLT_KEY, KafkaBolt.BOLT
       status.location.get.left.get,
       status.mentions.map(_.right.get),
       status.time,
+      status.text,
       Math.random() * 2.0 - 1.0
     )
 
